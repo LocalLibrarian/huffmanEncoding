@@ -12,6 +12,7 @@ typedef struct codes {
 	int code[39];
 } codeList;
 
+//Priority queue/tree structure
 typedef struct queue {
 	char c;
 	int count;
@@ -20,6 +21,7 @@ typedef struct queue {
 	struct queue *right;
 } pQueue;
 
+//preOrder traversal of the pQueue tree
 void printTree(pQueue *q, pQueue *parent) { //preOrder
 	if(q == NULL) return;
 	if(parent == NULL) printf("Tree; Char %c with count %d (Parent: node is root) \n", q -> c, q -> count);
@@ -28,6 +30,7 @@ void printTree(pQueue *q, pQueue *parent) { //preOrder
 	printTree(q -> right, q);
 }
 
+//Traversal of pQueue in queue format
 void printQueue(pQueue *q) {
 	pQueue *temp = q;
 	while(temp) {
@@ -36,6 +39,7 @@ void printQueue(pQueue *q) {
 	}
 }
 
+//Creates new pQueue node
 pQueue *createQNode(char c, int count) {
 	pQueue *node = (pQueue *)malloc(sizeof(pQueue));
 	node -> c = c;
@@ -47,6 +51,7 @@ pQueue *createQNode(char c, int count) {
 	return node;
 }
 
+//Inserts pQueue node into queue in correct position
 pQueue *insertQNode(pQueue *q, pQueue *node) {
 	if(q == node) {
 		q = q -> next;
@@ -81,6 +86,7 @@ pQueue *insertQNode(pQueue *q, pQueue *node) {
 	return q;
 }
 
+//Returns 3rd element of the pQueue queue
 pQueue *delete2Root(pQueue *q) {
 	if(q == NULL) return q;
 	if(q -> next == NULL) {
@@ -92,6 +98,7 @@ pQueue *delete2Root(pQueue *q) {
 	return temp2;
 }
 
+//Turns pQueue nodes into pQueue trees, merging them
 pQueue *makeTree(pQueue *q) { //'!' denotes a tree node
 	while(q -> next != NULL) { //complete tree
 		pQueue *node = createQNode('!', q -> count + q -> next -> count);
@@ -118,6 +125,7 @@ pQueue *makeTree(pQueue *q) { //'!' denotes a tree node
 	return q;
 }
 
+//Prints the count of each character
 void printCounts(int *counts) {
 	for(int i = 0; i < 26; i++) {
 		printf("Counts; Char %c with count %d\n", i + 97, counts[i]);
@@ -130,6 +138,7 @@ void printCounts(int *counts) {
 	printf("Counts; Char %c with count %d\n", 46, counts[38]);
 }
 
+//Actually decompresses the compressed file and outputs it
 void decodeFile(FILE *compressed, FILE *output, FILE *size, pQueue *q) {
 	int sized;
 	int length = 0;
@@ -161,6 +170,7 @@ void decodeFile(FILE *compressed, FILE *output, FILE *size, pQueue *q) {
 	}
 }
 
+//Reads the frequency of each character from file
 pQueue *readFrequency(FILE *frequency, pQueue *q) {
 	char c;
 	int freq;
@@ -176,6 +186,7 @@ pQueue *readFrequency(FILE *frequency, pQueue *q) {
 	return q;
 }
 
+//Main entry point for program
 int main(int argc, char *argv[]) {
 	FILE *frequency = fopen("frequency.txt", "r");
 	pQueue *q = NULL;
