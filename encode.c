@@ -12,6 +12,7 @@ typedef struct codes {
 	int code[39];
 } codeList;
 
+//Priority queue/tree structure
 typedef struct queue {
 	char c;
 	int count;
@@ -20,7 +21,8 @@ typedef struct queue {
 	struct queue *right;
 } pQueue;
 
-void printTree(pQueue *q, pQueue *parent) { //preOrder
+//preOrder traversal of the pQueue tree
+void printTree(pQueue *q, pQueue *parent) {
 	if(q == NULL) return;
 	if(parent == NULL) printf("Tree; Char %c with count %d (Parent: node is root) \n", q -> c, q -> count);
 	else printf("Tree; Char %c with count %d (Parent: Char %c with count %d) \n", q -> c, q -> count, parent -> c, parent -> count);
@@ -28,6 +30,7 @@ void printTree(pQueue *q, pQueue *parent) { //preOrder
 	printTree(q -> right, q);
 }
 
+//Traversal of pQueue in queue format
 void printQueue(pQueue *q) {
 	pQueue *temp = q;
 	while(temp) {
@@ -36,6 +39,7 @@ void printQueue(pQueue *q) {
 	}
 }
 
+//Creates new pQueue node
 pQueue *createQNode(char c, int count) {
 	pQueue *node = (pQueue *)malloc(sizeof(pQueue));
 	node -> c = c;
@@ -47,6 +51,7 @@ pQueue *createQNode(char c, int count) {
 	return node;
 }
 
+//Inserts pQueue node into queue in correct position
 pQueue *insertQNode(pQueue *q, pQueue *node) {
 	if(q == node) {
 		q = q -> next;
@@ -81,6 +86,7 @@ pQueue *insertQNode(pQueue *q, pQueue *node) {
 	return q;
 }
 
+//Returns 3rd element of the pQueue queue
 pQueue *delete2Root(pQueue *q) {
 	if(q == NULL) return q;
 	if(q -> next == NULL) {
@@ -92,6 +98,7 @@ pQueue *delete2Root(pQueue *q) {
 	return temp2;
 }
 
+//Turns pQueue nodes into pQueue trees, merging them
 pQueue *makeTree(pQueue *q) { //'!' denotes a tree node
 	while(q -> next != NULL) { //complete tree
 		pQueue *node = createQNode('!', q -> count + q -> next -> count);
@@ -118,6 +125,7 @@ pQueue *makeTree(pQueue *q) { //'!' denotes a tree node
 	return q;
 }
 
+//Prints the count of each character
 void printCounts(int *counts) {
 	for(int i = 0; i < 26; i++) {
 		printf("Counts; Char %c with count %d\n", i + 97, counts[i]);
@@ -130,6 +138,7 @@ void printCounts(int *counts) {
 	printf("Counts; Char %c with count %d\n", 46, counts[38]);
 }
 
+//Writes frequency counts to a file
 void writeFrequency(FILE *frequency, int *counts) {
 	for(int i = 0; i < 26; i++) {
 		if(counts[i] > 0) fprintf(frequency, "Character: %c, Frequency: %d\n", i + 97, counts[i]);
@@ -142,6 +151,7 @@ void writeFrequency(FILE *frequency, int *counts) {
 	if(counts[38] > 0) fprintf(frequency, "Character: %c, Frequency: %d\n", 46, counts[38]);
 }
 
+//Writes codes that each character in the input are being encoded into into a file
 void writeCodes(FILE *codes, pQueue *q, int *code, int len, codeList *codesList) {
 	if(q -> left != NULL) {
 		code[len] = 0;
@@ -165,6 +175,7 @@ void writeCodes(FILE *codes, pQueue *q, int *code, int len, codeList *codesList)
 	}
 }
 
+//Actually writes the binary codes to the compressed version of the file
 void compressFile(FILE *compressed, FILE *input, pQueue *q, codeList *codesList) {
 	//unsigned char test = 0b00000000; //binary 8 bit (1 byte)
 	//fwrite(&test, sizeof(test), 1, compressed); //write from var test, which is size test, 1 time, at file compressed
@@ -204,12 +215,14 @@ void compressFile(FILE *compressed, FILE *input, pQueue *q, codeList *codesList)
 	}
 }
 
+//Finds the total amount of characters in the input file and saves it to file
 void findSize(FILE *treeOutput, int *counts, codeList *codesList) {
 	int size = 0;
 	for(int i = 0; i < 39; i++) size += counts[i];
 	fprintf(treeOutput, "%d", size);
 }
 
+//Main entry point for program
 int main(int argc, char *argv[]) {
 	if(argc < 2) {
 		printf("No input file passed. Please do so from the command line. Aborting...\n");
